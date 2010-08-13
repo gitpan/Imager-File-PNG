@@ -26,10 +26,10 @@ my %opts =
 my @inc;
 if ($BUILDING_IMAGER) {
   push @inc, "-I..";
-  push @INC, "../lib";
+  unshift @INC, "../lib";
 }
 else {
-  push @INC, "inc";
+  unshift @INC, "inc";
   print "PNG: building independently\n";
   require Imager::ExtUtils;
   push @inc, Imager::ExtUtils->includes;
