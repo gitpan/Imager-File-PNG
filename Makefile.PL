@@ -21,6 +21,7 @@ my %opts =
    NAME => 'Imager::File::PNG',
    VERSION_FROM => 'PNG.pm',
    OBJECT => 'PNG.o impng.o',
+   clean => { FILES => 'testout' },
   );
 
 my @inc;
@@ -36,7 +37,7 @@ else {
   $opts{TYPEMAPS} = [ Imager::ExtUtils->typemap ];
 
   # Imager required configure through use
-  my @Imager_req = ( Imager => "0.77" );
+  my @Imager_req = ( Imager => "0.78" );
   if ($MM_ver >= 6.46) {
     $opts{META_MERGE} =
       {
@@ -54,8 +55,8 @@ else {
 	homepage => "http://imager.perl.org/",
 	repository =>
 	{
-	 url => "http://imager.perl.org/svn/trunk/Imager-File-PNG",
-	 web => "http://imager.perl.org/svnweb/public/browse/trunk/Imager-File-PNG",
+	 url => "http://imager.perl.org/svn/trunk/Imager/PNG",
+	 web => "http://imager.perl.org/svnweb/public/browse/trunk/Imager/PNG",
 	 type => "svn",
 	},
        },
@@ -72,13 +73,32 @@ require Imager::Probe;
 my %probe =
   (
    name => "PNG",
+   altname => "Generic",
    pkg => [ qw/libpng14 libpng12 libpng10 libpng/ ],
    inccheck => sub { -e File::Spec->catfile($_[0], "png.h") },
    libbase => "png",
    testcode => _png_test_code(),
    testcodeheaders => [ "png.h", "stdio.h" ],
-   incpath => join($Config{path_sep}, @incpaths),
-   libpath => join($Config{path_sep}, @libpaths),
+   incpath => \@incpaths,
+   libpath => \@libpaths,
+   alternatives =>
+   [
+    {
+     altname => "v1.4",
+     incsuffix => "libpng14",
+     libbase => "png14",
+    },
+    {
+     altname => "v1.2",
+     incsuffix => "libpng12",
+     libbase => "png12",
+    },
+    {
+     altname => "v1.0",
+     incsuffix => "libpng10",
+     libbase => "png10",
+    },
+   ],
   );
 
 my $probe_res = Imager::Probe->probe(\%probe);

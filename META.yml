@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Imager-File-PNG
-version:            0.77
+version:            0.78
 abstract:           PNG Image file support
 author:
     - Tony Cook <tony@imager.perl.org>
@@ -8,19 +8,19 @@ license:            unknown
 distribution_type:  module
 configure_requires:
     ExtUtils::MakeMaker:  0
-    Imager:               0.77
+    Imager:               0.78
 build_requires:
     ExtUtils::MakeMaker:  0
-    Imager:               0.77
+    Imager:               0.78
     Test::More:           0.47
 requires:
-    Imager:  0.77
+    Imager:  0.78
 resources:
     homepage:  http://imager.perl.org/
     repository:
         type:  svn
-        url:   http://imager.perl.org/svn/trunk/Imager-File-PNG
-        web:   http://imager.perl.org/svnweb/public/browse/trunk/Imager-File-PNG
+        url:   http://imager.perl.org/svn/trunk/Imager/PNG
+        web:   http://imager.perl.org/svnweb/public/browse/trunk/Imager/PNG
 no_index:
     directory:
         - t
