@@ -17,3 +17,11 @@
 # editor
 ^#
 ~$
+
+^\.gitignore$
+
+# Win32 junk
+\.exe$
+^dll\.(base|exp)$
+^PNG\.def$
+^PNG_def\.old$
