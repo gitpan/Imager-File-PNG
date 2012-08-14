@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Imager-File-PNG
-version:            0.84
+version:            0.85
 abstract:           PNG Image file support
 author:
     - Tony Cook <tonyc@cpan.org>
