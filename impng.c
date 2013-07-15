@@ -1,6 +1,7 @@
 #include "impng.h"
 #include "png.h"
 #include <stdlib.h>
+#include <string.h>
 
 /* this is a way to get number of channels from color space 
  * Color code to channel number */
@@ -45,6 +46,35 @@ get_string2(i_img_tags *tags, const char *name, char *buf, size_t *size);
 unsigned
 i_png_lib_version(void) {
   return png_access_version_number();
+}
+
+static char const * const
+features[] =
+  {
+#ifdef PNG_BENIGN_ERRORS_SUPPORTED
+    "benign-errors",
+#endif
+#ifdef PNG_READ_SUPPORTED
+    "read",
+#endif
+#ifdef PNG_WRITE_SUPPORTED
+    "write",
+#endif
+#ifdef PNG_MNG_FEATURES_SUPPORTED
+    "mng-features",
+#endif
+#ifdef PNG_CHECK_cHRM_SUPPORTED
+    "check-cHRM",
+#endif
+#ifdef PNG_SET_USER_LIMITS_SUPPORTED
+    "user-limits",
+#endif
+    NULL
+  };
+
+const char * const *
+i_png_features(void) {
+  return features;
 }
 
 static void
@@ -270,7 +300,7 @@ static void
 cleanup_read_state(i_png_read_statep);
 
 i_img*
-i_readpng_wiol(io_glue *ig) {
+i_readpng_wiol(io_glue *ig, int flags) {
   i_img *im = NULL;
   png_structp png_ptr;
   png_infop info_ptr;
@@ -293,7 +323,23 @@ i_readpng_wiol(io_glue *ig) {
     return NULL;
   }
   png_set_read_fn(png_ptr, (png_voidp) (ig), wiol_read_data);
-  
+
+#if defined(PNG_BENIGN_ERRORS_SUPPORTED)
+  png_set_benign_errors(png_ptr, (flags & IMPNG_READ_IGNORE_BENIGN_ERRORS) ? 1 : 0);
+#elif PNG_LIBPNG_VER >= 10400
+  if (flags & IMPNG_READ_IGNORE_BENIGN_ERRORS) {
+    i_push_error(0, "libpng not configured to ignore benign errors");
+    png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+    return NULL;
+  }
+#else
+  if (flags & IMPNG_READ_IGNORE_BENIGN_ERRORS) {
+    i_push_error(0, "libpng too old to ignore benign errors");
+    png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+    return NULL;
+  }
+#endif
+
   info_ptr = png_create_info_struct(png_ptr);
   if (info_ptr == NULL) {
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
@@ -308,7 +354,7 @@ i_readpng_wiol(io_glue *ig) {
     cleanup_read_state(&rs);
     return NULL;
   }
-  
+
   /* we do our own limit checks */
   png_set_user_limits(png_ptr, PNG_DIM_MAX, PNG_DIM_MAX);
 

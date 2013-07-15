@@ -28,4 +28,5 @@ testimg/paltrans.png
 testimg/rgb16.png
 testimg/rgb8.png
 testimg/rgb8i.png
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)
